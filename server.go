@@ -17,7 +17,7 @@ func main() {
 
 	app.Get("/mc/*", func(c *fiber.Ctx) error {
 		ip := c.Params("*")
-		out, _ := exec.Command("ping", ip, "-c 4", "-i 3", "-w 10").Output()
+		out, _ := exec.Command("ping", ip, "-c 4", "-i 1", "-w 10").Output()
 		if strings.Contains(string(out), "Destination Host Unreachable") {
 			msg := fmt.Sprintf("Its down :(")
 			return c.SendString(msg)
