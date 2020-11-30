@@ -1,7 +1,7 @@
 # triton
 
-```go mod init github.com/toomanybyt3s/triton```
+```export DOCKER_BUILDKIT=1```
 
-```go mod tidy```
+```docker build -t api_tmb . ```
 
-```go run server.go```
+```docker run -d -it -p 9090:9090 api_tmb:latest```
