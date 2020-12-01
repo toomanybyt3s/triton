@@ -1,6 +1,6 @@
 # triton
 
-```export DOCKER_BUILDKIT=1```
+```export DOCKER_BUILDKIT=0```
 
 ```docker build -t api_tmb . ```
 
