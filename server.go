@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/http"
-	"os/exec"
-	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 )
@@ -12,7 +12,7 @@ import (
 func main() {
 	e := echo.New()
 	e.GET("/", root)
-	e.GET("/mc/:ip", mc)
+	e.GET("/mc/:ip/:port", mc)
 	e.Logger.Fatal(e.Start(":9090"))
 }
 
@@ -22,8 +22,10 @@ func root(c echo.Context) error {
 
 func mc(c echo.Context) error {
 	ip := c.Param("ip")
-	out, _ := exec.Command("ping", ip, "-c 4", "-i 1", "-w 5").Output()
-	if strings.Contains(string(out), "Destination Host Unreachable") {
+	port := c.Param("port")
+	timeout := time.Duration(1 * time.Second)
+	_, err := net.DialTimeout("tcp", ip+":"+port, timeout)
+	if err != nil {
 		msg := fmt.Sprintf("Its down :(")
 		return c.String(http.StatusOK, msg)
 	}
