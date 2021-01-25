@@ -17,7 +17,7 @@ func main() {
 }
 
 func root(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World 👋!")
+	return c.JSON(http.StatusOK, {health: "online",})
 }
 
 func mc(c echo.Context) error {
@@ -26,9 +26,7 @@ func mc(c echo.Context) error {
 	timeout := time.Duration(1 * time.Second)
 	_, err := net.DialTimeout("tcp", ip+":"+port, timeout)
 	if err != nil {
-		msg := fmt.Sprintf("Its down :(")
-		return c.String(http.StatusOK, msg)
+		return c.JSON(http.StatusOK, {status: "down",})
 	}
-	msg := fmt.Sprintf("IT'S ALIVEEE")
-	return c.String(http.StatusOK, msg)
+	return c.JSON(http.StatusOK, {status: "up",})
 }
