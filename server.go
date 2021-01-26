@@ -1,13 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/labstack/echo"
 )
+
+type apijsonServerhealth struct {
+	health string `json:"health"`
+}
+
+type apijsonMsg struct {
+	status string `json:"status"`
+}
 
 func main() {
 	e := echo.New()
@@ -17,7 +24,10 @@ func main() {
 }
 
 func root(c echo.Context) error {
-	return c.JSON(http.StatusOK, {health: "online",})
+	msg := &apijsonServerhealth{
+		health: "online",
+	}
+	return c.JSON(http.StatusOK, msg)
 }
 
 func mc(c echo.Context) error {
@@ -26,7 +36,13 @@ func mc(c echo.Context) error {
 	timeout := time.Duration(1 * time.Second)
 	_, err := net.DialTimeout("tcp", ip+":"+port, timeout)
 	if err != nil {
-		return c.JSON(http.StatusOK, {status: "down",})
+		msg := &apijsonMsg{
+			status: "down",
+		}
+		return c.JSON(http.StatusOK, msg)
 	}
-	return c.JSON(http.StatusOK, {status: "up",})
+	msg := &apijsonMsg{
+		status: "up",
+	}
+	return c.JSON(http.StatusOK, msg)
 }
