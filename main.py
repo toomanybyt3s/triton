@@ -10,16 +10,21 @@ import time
 
 test_all = ["SERVER_TOKEN", "SERVER_IP", "SERVER_PORT", "SERVER_PREFIX"]
 
-for string in test_all:
+try:
+    TOKEN = os.environ["SERVER_TOKEN"]
+    host = os.environ["SERVER_IP"] + ":" + os.environ["SERVER_PORT"]
+    prefix = os.environ["SERVER_PREFIX"]
+    server = MinecraftServer.lookup(host)
+except:
     try:
-        if os.environ[string] != "":
-            print("{} not supplied using docker environment variables, use this as ref https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file".format(string))
-            quit()
+        TOKEN = config["token"]
+        host = config["ip"] + ":" + config["port"]
+        server = MinecraftServer.lookup(host)
+        prefix = config["prefix"]
     except:
-        config = toml.load("config.toml")
-        if (config[string] == None):
-            print("{} not supplied in config.toml".format(string))
-            quit()
+        print("No enviroments pass into either docker or config.toml")
+        exit()
+
 
 ref_time = time.localtime()
 
