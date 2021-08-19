@@ -2,6 +2,6 @@
 
 ```export DOCKER_BUILDKIT=0```
 
-```docker build -t api_tmb . ```
+```docker build -t triton . ```
 
-```docker run -d -it -p 9090:9090 api_tmb:latest```
+```docker run -d --env SERVER_TOKEN= --env SERVER_IP= --env SERVER_PORT= --env SERVER_PREFIX= triton:latest```
