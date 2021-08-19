@@ -1,12 +1,7 @@
-FROM golang:latest
+FROM python:3.8
 
 WORKDIR /cmd
 
-COPY . .
+RUN pip install -r requirements.txt
 
-RUN go mod init example.com/example
-RUN go mod tidy
-
-RUN go build server.go
-
-ENTRYPOINT [ "./server" ]
+ENTRYPOINT [ "python3 main.py" ]
