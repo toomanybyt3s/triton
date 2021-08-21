@@ -7,20 +7,17 @@ import platform
 import subprocess
 import time
 
-
-test_all = ["SERVER_TOKEN", "SERVER_IP", "SERVER_PORT", "SERVER_PREFIX"]
+config = toml.load("config.toml")
 
 try:
     TOKEN = os.environ["SERVER_TOKEN"]
     host = os.environ["SERVER_IP"] + ":" + os.environ["SERVER_PORT"]
     prefix = os.environ["SERVER_PREFIX"]
-    server = MinecraftServer.lookup(host)
 except:
     try:
-        TOKEN = config["token"]
-        host = config["ip"] + ":" + config["port"]
-        server = MinecraftServer.lookup(host)
-        prefix = config["prefix"]
+        TOKEN = config["SERVER_TOKEN"]
+        host = config["SERVER_IP"] + ":" + config["SERVER_PORT"]
+        prefix = config["SERVER_PREFIX"]
     except:
         print("No enviroments pass into either docker or config.toml")
         exit()
@@ -28,11 +25,7 @@ except:
 
 ref_time = time.localtime()
 
-
-TOKEN = config["token"]
-host = config["ip"] + ":" + config["port"]
 server = MinecraftServer.lookup(host)
-prefix = config["prefix"]
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True)
 print("Triton started")
@@ -42,9 +35,9 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content.startswith('!status'):
+    if message.content.startswith("{}status".format(prefix)):
         cur_time = time.strftime("%H:%M:%S", ref_time)
-        if (ping(config["ip"])):
+        if (ping()):
             try:
                 msg = server.status()
             except:
@@ -56,9 +49,9 @@ async def on_message(message):
                 await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=send_out, status=discord.Status.online))
                 send_out = "since {0}, Status : ✔️ UP ✔️ , Players : {1}".format(cur_time, msg.players.online)
 
-    if message.content.startswith('!query'):
+    if message.content.startswith("{}query".format(prefix)):
         cur_time = time.strftime("%H:%M:%S", ref_time)
-        if (ping(config["ip"])):
+        if (ping()):
             try:
                 msg = server.status()
             except:
@@ -78,12 +71,18 @@ async def on_message(message):
                     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=send_out, status=discord.Status.online))
                     await message.channel.send("The server has the following players online: {0}".format(", ".join(query.players.names)))
 
-def ping(host):
+    if message.content.startswith("{}help".format(prefix)):
+        await message.channel.send("```Heres the available commands\n - status\n - query```")
+
+
+def ping():
+    ip = host.split(":")[0]
+    print(ip)
+    
     param = '-n' if platform.system().lower()=='windows' else '-c'
 
-    command = ['ping', param, '1', host]
+    command = ['ping', param, '1', ip]
 
     return subprocess.call(command) == 0
-
 
 bot.run(TOKEN)
