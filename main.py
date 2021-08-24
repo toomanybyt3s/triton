@@ -22,9 +22,6 @@ except:
         print("No enviroments pass into either docker or config.toml")
         exit()
 
-
-ref_time = time.localtime()
-
 server = MinecraftServer.lookup(host)
 
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True)
@@ -36,6 +33,7 @@ async def on_message(message):
         return
 
     if message.content.startswith("{}status".format(prefix)):
+        ref_time = time.localtime()
         cur_time = time.strftime("%H:%M:%S", ref_time)
         if (ping()):
             try:
@@ -50,6 +48,7 @@ async def on_message(message):
                 send_out = "since {0}, Status : ✔️ UP ✔️ , Players : {1}".format(cur_time, msg.players.online)
 
     if message.content.startswith("{}query".format(prefix)):
+        ref_time = time.localtime()
         cur_time = time.strftime("%H:%M:%S", ref_time)
         if (ping()):
             try:
